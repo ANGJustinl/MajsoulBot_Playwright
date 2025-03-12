@@ -1,25 +1,65 @@
-import webbrowser
-import pygetwindow as gw
-from pygetwindow import PyGetWindowException
+import time
+from playwright.sync_api import sync_playwright
 
-
-def get_window():
-    # 请不要打开其他叫（或包含）这个名字的窗口，可能导致 bug
-    window = gw.getWindowsWithTitle('雀魂麻將')
-    return window[0] if window else None
-
-
-def get_box():
-    target_window = get_window()
-    window_not_found = target_window is None
-    if window_not_found:
-        webbrowser.open('steam://rungameid/1329410')  # Majsoul
-    while target_window is None:
-        target_window = get_window()
-    if window_not_found:
+class MajsoulWindow:
+    def __init__(self):
+        """Initialize Majsoul window and perform login"""
         try:
-            target_window.activate()
-        except PyGetWindowException as e:
-            print(e)  # 大部分时候是 pygetwindow.PyGetWindowException: Error code from Windows: 0 - 操作成功完成。
-    return (target_window.left, target_window.top,
-            target_window.right, target_window.bottom)
+            self.pw = sync_playwright().start()
+            self.browser = self.pw.chromium.launch(
+                headless=False,
+                args=['--window-size=1280,720'],
+                timeout=0
+            )
+            self.context = self.browser.new_context(
+                viewport={'width': 1280, 'height': 840},
+                no_viewport=True
+            )
+            self.page = self.context.new_page()
+            
+            # Navigate and login
+            self.page.goto("https://game.maj-soul.com/1/")
+            print("Waiting for Majsoul to load...")
+            time.sleep(40)
+            self.page.locator("html").click()
+            self.page.locator("#layaCanvas").click(position={"x":926,"y":214})
+            time.sleep(0.5)
+            self.page.get_by_role("textbox").fill("angjustinl@163.com")
+            self.page.locator("#layaCanvas").click(position={"x":922,"y":300})
+            time.sleep(0.5)
+            self.page.get_by_role("textbox").fill("ang114514")
+            self.page.locator("#layaCanvas").click(position={"x":914,"y":465})
+            
+        except Exception as e:
+            print(f"Failed to initialize Majsoul window: {e}")
+            self.cleanup()
+            raise
+
+    def get_box(self):
+        """Get the game window position and size
+        Returns: tuple (left, top, right, bottom)
+        """
+        try:
+            viewport_size = self.page.viewport_size
+            if viewport_size:
+                width = viewport_size['width']
+                height = viewport_size['height']
+                return (0, 0, width, height)
+        except Exception as e:
+            print(f"Error getting window box: {e}")
+            return None
+
+    def __call__(self):
+        """Magic method as shortcut for get_box"""
+        return self.get_box()
+
+    def cleanup(self):
+        """Clean up resources"""
+        if hasattr(self, 'browser'):
+            self.browser.close()
+        if hasattr(self, 'pw'):
+            self.pw.stop()
+
+    def __del__(self):
+        """Destructor to ensure cleanup"""
+        self.cleanup()
