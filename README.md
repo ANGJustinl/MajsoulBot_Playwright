@@ -4,9 +4,9 @@
 
 ---
 
-yolo-v8识别游戏界面 + Mahjong-helper（来自[EndlessCheng](https://github.com/EndlessCheng)） + pyautogui模拟鼠标点击
+yolo-v8识别游戏界面 + Mahjong-helper（来自[EndlessCheng](https://github.com/EndlessCheng)） + Playwright模拟Web点击
 
-**本项目仅供学习体验实战使用yolo-v8框架，请勿在有价值的账号上使用，请勿频繁使用，请勿商用开源代码。 因使用本代码带来的掉分、封号等问题，或者因pyautogui点击到错误位置带来的损失，作者概不负责。 错误商用本代码，作者保留追责权利。**
+**本项目仅供学习体验实战使用yolo-v8框架，请勿在有价值的账号上使用，请勿频繁使用，请勿商用开源代码。 因使用本代码带来的掉分、封号等问题，或者因Playwright点击到错误位置带来的损失，作者概不负责。 错误商用本代码，作者保留追责权利。**
 
 ### 2024.11 更新：
 
@@ -18,6 +18,8 @@ yolo-v8识别游戏界面 + Mahjong-helper（来自[EndlessCheng](https://github
 
 ```commandline
 pip install -r requirements.txt
+playwright install
+# 修改 .env
 python main.py
 ```
 
