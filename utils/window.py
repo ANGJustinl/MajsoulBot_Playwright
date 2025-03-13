@@ -2,17 +2,17 @@ import time
 from playwright.sync_api import sync_playwright
 
 class MajsoulWindow:
-    def __init__(self):
+    def __init__(self, account: str, password: str):
         """Initialize Majsoul window and perform login"""
         try:
             self.pw = sync_playwright().start()
             self.browser = self.pw.chromium.launch(
                 headless=False,
-                args=['--window-size=1280,720'],
+                args=['--window-size=1440,920'],
                 timeout=0
             )
             self.context = self.browser.new_context(
-                viewport={'width': 1280, 'height': 840},
+                viewport={'width': 1440, 'height': 900},
                 no_viewport=True
             )
             self.page = self.context.new_page()
@@ -24,10 +24,10 @@ class MajsoulWindow:
             self.page.locator("html").click()
             self.page.locator("#layaCanvas").click(position={"x":926,"y":214})
             time.sleep(0.5)
-            self.page.get_by_role("textbox").fill("angjustinl@163.com")
+            self.page.get_by_role("textbox").fill(account)
             self.page.locator("#layaCanvas").click(position={"x":922,"y":300})
             time.sleep(0.5)
-            self.page.get_by_role("textbox").fill("ang114514")
+            self.page.get_by_role("textbox").fill(password)
             self.page.locator("#layaCanvas").click(position={"x":914,"y":465})
             
         except Exception as e:

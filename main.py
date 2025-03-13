@@ -9,18 +9,25 @@ from utils.click import MyClick
 from utils.window import MajsoulWindow
 from detector.detector import Detector
 from strategy.strategy import step
+from strategy.strategy import step
+from config import config
 
 class MajsoulGame:
     def __init__(self):
-        self.MAX_QUEUE_TIME = 30  # 超过30秒重新开始匹配
-        self.MAX_WAIT_TIME = 15
+        # Initialize configuration from config
+        self.MAX_QUEUE_TIME = config.MAX_QUEUE_TIME
+        self.MAX_WAIT_TIME = config.MAX_WAIT_TIME
+        self.ACCOUNT = config.ACCOUNT
+        self.PASSWORD = config.PASSWORD
+        self.MATCH_RANK = config.MATCH_RANK
+        self.AUTO_CONTINUE = config.AUTO_CONTINUE
         
         colorama.init()
         print(Fore.WHITE)
 
         # Initialize Majsoul window
         try:
-            self.window = MajsoulWindow()
+            self.window = MajsoulWindow(self.ACCOUNT, self.PASSWORD)
         except Exception as e:
             print(f"Failed to start: {e}")
             raise
@@ -97,7 +104,7 @@ class MajsoulGame:
             self.green_count = 0
         elif self.click_if_exists(buttons, 'match', xyxy_buttons):
             pass
-        elif self.click_if_exists(buttons, 'bronze', xyxy_buttons):
+        elif self.click_if_exists(buttons, self.MATCH_RANK, xyxy_buttons):
             pass
 
     def handle_game_end(self, char_dict, box):
@@ -107,7 +114,7 @@ class MajsoulGame:
         
         if ('2queren' in char_dict and 'queren' in char_dict):
             self.click.click(char_dict['queren'])
-        elif 'zailaiyichang' in char_dict:
+        elif 'zailaiyichang' in char_dict and self.AUTO_CONTINUE == True:
             self.click.click(char_dict['zailaiyichang'])
         elif 'queren' in char_dict:
             self.click.click(char_dict['queren'])
